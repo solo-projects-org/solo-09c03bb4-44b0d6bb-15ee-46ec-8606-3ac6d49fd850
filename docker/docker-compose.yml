@@ -1,0 +1,20 @@
+services:
+  weigh-dataset:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: weigh-dataset:1.0.0
+    container_name: weigh-dataset
+    ports:
+      - "8000:8000"
+    environment:
+      # 过磅时间列名；字符串时间解析格式可再加 WEIGH_TIME_STRING_FORMAT
+      WEIGH_TIME_COLUMN: "weigh_time"
+      WEIGH_INPUT_DIR: /data/input
+      WEIGH_OUTPUT_DIR: /data/output
+    volumes:
+      # 原始 Parquet 挂载为只读，原档绝不动
+      - ../data_in:/data/input:ro
+      # 发布清单与拆写产物
+      - ../data_out:/data/output
+    restart: unless-stopped
